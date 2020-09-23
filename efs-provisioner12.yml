@@ -1,0 +1,36 @@
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: efs-provisioner12
+  namespace: myns12
+spec:
+  selector:
+    matchLabels:
+      app: efs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: efs-provisioner
+    spec:
+      containers:
+        - name: efs-provisioner12
+          image: quay.io/external_storage/efs-provisioner:v0.1.0
+          env:
+            - name: FILE_SYSTEM_ID
+              value: fs-c8068c19  
+            - name: AWS_REGION
+              value: ap-south-1
+            - name: PROVISIONER_NAME
+              value: ma/web-efs
+          volumeMounts:
+            - name: pv-volume12
+              mountPath: /persistentvolumes
+      volumes:
+        - name: pv-volume12
+          nfs:
+            server: fs-c8068c19.efs.ap-south-1.amazonaws.com
+            path: /
